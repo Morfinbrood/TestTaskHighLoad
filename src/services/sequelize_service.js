@@ -1,5 +1,7 @@
 import dbConfig from "../config/db.config.js";
 import Sequelize from "sequelize";
+import User from "../models/user.js";
+import MigrationService from "./migration_service.js";
 
 class SequelizeService {
     constructor() {
@@ -11,15 +13,16 @@ class SequelizeService {
 
     async init() {
         try {
-            this.sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
+            this.sequelize = await new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
                 host: dbConfig.HOST,
                 dialect: dbConfig.dialect,
                 define: {
                     timestamps: false
                 }
             });
-            this.defineUser();
-            await this.sequelize.sync({ force: true });
+            await this.defineUser();
+            await this.sequelize.sync();
+            await MigrationService.initMigration(this.sequelize);
         } catch (error) {
             console.error(`init Sequelize with config ${dbConfig}  err:${error}`);
             throw new Error(`init  Sequelize${error}`);
@@ -27,23 +30,7 @@ class SequelizeService {
     }
 
     async defineUser() {
-        this.user = this.sequelize.define("user", {
-            userId: {
-                type: Sequelize.INTEGER,
-                autoIncrement: true,
-                primaryKey: true,
-                allowNull: false,
-                unique: true
-            },
-            balance: {
-                type: Sequelize.INTEGER,
-                allowNull: false,
-                validate: {
-                    isNumeric: true,
-                    min: 0
-                }
-            }
-        });
+        this.user = await this.sequelize.define("user", User);
     }
 
     async charge(userId, amount) {
