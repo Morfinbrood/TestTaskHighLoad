@@ -5,6 +5,9 @@ export default class BillingService {
     static async charge(userId, amount) {
         try {
             const userRecord = await sequelizeService.getUserRecordByID(userId);
+            if (!userRecord) {
+                return { denyReason: "user not found" };
+            }
             if (userRecord?.balance >= amount) {
                 await sequelizeService.charge(userRecord, amount);
             } else {

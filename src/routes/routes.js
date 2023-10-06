@@ -44,7 +44,8 @@ export default class RecordRoutes {
                 const chargeResult = await BillingService.charge(userId, amount);
 
                 if (chargeResult?.denyReason) {
-                    res.status(200).send(chargeResult.denyReason).end();
+                    console.log(chargeResult?.denyReason);
+                    res.status(403).send(chargeResult.denyReason).end();
                 } else {
                     res.status(200).send('the charge is successfull').end();
                 }
