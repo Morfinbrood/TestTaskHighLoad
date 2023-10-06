@@ -4,10 +4,9 @@ export default class BillingService {
 
     static async charge(userId, amount) {
         try {
-            let chargeResult;
             const userRecord = await sequelizeService.getUserRecordByID(userId);
             if (userRecord?.balance >= amount) {
-                chargeResult = await sequelizeService.charge(userRecord, amount);
+                await sequelizeService.charge(userRecord, amount);
             } else {
                 return { denyReason: "insufficient funds" };
             }
