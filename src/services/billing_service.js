@@ -13,8 +13,8 @@ export default class BillingService {
 
             return true;
         } catch (error) {
-            console.error(`MybitlyService:  getRedirectLink: ${error} `);
-            throw new Error(`MybitlyService:getRedirectLink  ${error}`);
+            console.error(`BillingService:  charge: ${error} `);
+            throw new Error(`BillingService:charge  ${error}`);
         }
     }
 }
