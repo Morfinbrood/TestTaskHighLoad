@@ -30,16 +30,30 @@ class SequelizeService {
     }
 
     async defineUser() {
-        this.user = await this.sequelize.define("user", User);
+        try {
+            this.user = await this.sequelize.define("user", User);
+        } catch (error) {
+            console.error(`init defineUser  err:${error}`);
+            throw new Error(`init  defineUser${error}`);
+        }
     }
 
-    async charge(userId, amount) {
+    async getUserRecordByID(userId) {
         try {
-            console.log(` chargechargechargecharge  `);
-            return true;
+            return await this.user.findByPk(userId);
         } catch (error) {
-            console.error(`Exception SequelizeService:charge() userId:${userId}, amount:${amount} `);
-            throw new Error(`DbService:charge()  ${error}`);
+            console.error(`Exception getUserRecord: userId:${userId} `);
+            throw new Error(`SequelizeService:getUserRecord()  ${error}`);
+        }
+    }
+
+    async charge(userRecord, amount) {
+        try {
+            await userRecord.decrement('balance', { 'by': amount });
+            return true
+        } catch (error) {
+            console.error(`Exception SequelizeService:charge() userRecord:${userRecord}, amount:${amount} `);
+            throw new Error(`SequelizeService:charge()  ${error}`);
         }
     }
 

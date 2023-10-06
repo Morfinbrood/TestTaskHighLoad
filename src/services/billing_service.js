@@ -4,18 +4,18 @@ export default class BillingService {
 
     static async charge(userId, amount) {
         try {
-            const chargeResult = await sequelizeService.charge(userId, amount);
-
-            if (chargeResult) {
-                console.log ("SUCCESS!!!!!")
-                return { success: true };
+            let chargeResult;
+            const userRecord = await sequelizeService.getUserRecordByID(userId);
+            if (userRecord?.balance >= amount) {
+                chargeResult = await sequelizeService.charge(userRecord, amount);
+            } else {
+                return { denyReason: "insufficient funds" };
             }
-            console.log ("denyReasondenyReasondenyReason!!!!!")
-            return { denyReason: "some Deny Reason" };
+
+            return true;
         } catch (error) {
-            console.error(`MybitlyService:  getRedirectLink: ${error} subPart${subPart}`);
+            console.error(`MybitlyService:  getRedirectLink: ${error} `);
             throw new Error(`MybitlyService:getRedirectLink  ${error}`);
         }
     }
-
 }

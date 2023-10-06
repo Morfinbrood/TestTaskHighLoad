@@ -33,29 +33,21 @@ export default class RecordRoutes {
     addChargeRoute() {
         this.recordRoutes.patch('/api/charge', async (req, res) => {
             try {
-                if (!req?.query || !req?.query?.userId || !req?.query?.amount || req.query.amount < 0) {
+                if (!req?.query || !req?.query?.userId || !Number(req.query.userId) || !req?.query?.amount || !Number(req.query.amount) || Number(req.query.amount) < 0) {
                     console.error(`ROUTES /api/charge Not correct request: ${req} `);
                     return res.sendStatus(400);
                 }
 
-                const userId = req.query.userId;
-                const amount = req.query.amount;
+                const userId = Number(req.query.userId);
+                const amount = Number(req.query.amount);
 
                 const chargeResult = await BillingService.charge(userId, amount);
 
-                if (chargeResult?.success) {
+                if (chargeResult?.denyReason) {
+                    res.status(200).send(chargeResult.denyReason).end();
+                } else {
                     res.status(200).send('the charge is successfull').end();
                 }
-                else {
-                    if (chargeResult?.denyReason) {
-                        res.status(200).send(addLinkResult.denyReason).end();
-                    }
-                    else {
-                        console.error(`UNEXPECTED ERROR: ROUTES: /api/charge ${req} `);
-                        throw new Error(`UNEXPECTED ERROR: ROUTES: /api/charge ${req} `);
-                    }
-                }
-
             } catch (error) {
                 console.error(`Exception: ROUTES /api/charge ERROR ${error}`);
                 res.status(500).send(`Server error`).end();
