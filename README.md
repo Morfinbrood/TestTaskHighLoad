@@ -10,7 +10,9 @@ This task will be tested by sending 10,000 requests at one time to try to withdr
 
 Implemented:
 Endpoint: http://localhost:7000/api/charge?userId=1&amount=2
+
 query.userId  and query.amount is necessary
+
 1 time launched migration implemented with  https://www.npmjs.com/package/umzug
 
 How to use:
