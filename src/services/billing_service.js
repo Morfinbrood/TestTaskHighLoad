@@ -8,16 +8,23 @@ export default class BillingService {
             if (!userRecord) {
                 return { denyReason: "user not found" };
             }
-            if (userRecord?.balance >= amount) {
+            if (this.isUserSufficientFunds(userRecord, amount)) {
                 await sequelizeService.charge(userRecord, amount);
             } else {
                 return { denyReason: "insufficient funds" };
             }
 
-            return true;
         } catch (error) {
             console.error(`BillingService:  charge: ${error} `);
             throw new Error(`BillingService:charge  ${error}`);
         }
     }
+
+    static isUserSufficientFunds(userRecord, amount) {
+        if (typeof userRecord?.balance !== 'number' || typeof amount !== 'number') {
+            throw new Error(`userRecord:${userRecord}  or  amount:${amount} not number value `);
+        }
+        return userRecord.balance >= amount;
+    }
+
 }

@@ -8,6 +8,8 @@ export default class MigrationService {
             const umzug = new Umzug({
                 storage: new SequelizeStorage({ sequelize }),
                 context: await sequelize.getQueryInterface(),
+                // TODO idk why I can't use migration folder, not see migrations, mb umzug not support ES6 modules
+                // TODO that why I use here hardcode initial migration
                 migrations: [
                     {
                         name: '00-init-migration',

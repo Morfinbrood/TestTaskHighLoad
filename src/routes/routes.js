@@ -33,6 +33,7 @@ export default class RecordRoutes {
     addChargeRoute() {
         this.recordRoutes.patch('/api/charge', async (req, res) => {
             try {
+
                 if (!req?.query || !req?.query?.userId || !Number(req.query.userId) || !req?.query?.amount || !Number(req.query.amount) || Number(req.query.amount) < 0) {
                     console.error(`ROUTES /api/charge Not correct request: ${req} `);
                     return res.sendStatus(400);
@@ -44,7 +45,6 @@ export default class RecordRoutes {
                 const chargeResult = await BillingService.charge(userId, amount);
 
                 if (chargeResult?.denyReason) {
-                    console.log(chargeResult?.denyReason);
                     res.status(403).send(chargeResult.denyReason).end();
                 } else {
                     res.status(200).send('the charge is successfull').end();

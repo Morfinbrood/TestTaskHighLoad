@@ -50,7 +50,6 @@ class SequelizeService {
     async charge(userRecord, amount) {
         try {
             await userRecord.decrement('balance', { 'by': amount });
-            return true
         } catch (error) {
             console.error(`Exception SequelizeService:charge() userRecord:${userRecord}, amount:${amount} `);
             throw new Error(`SequelizeService:charge()  ${error}`);
